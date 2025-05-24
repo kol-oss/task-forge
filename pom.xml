@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.github.kol-oss</groupId>
+  <artifactId>task-forge</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Task Forge</name>
+  <description>Java library for async tasks and timers</description>
+  <url>https://github.com/kol-oss/task-forge</url>
+
+  <licenses>
+    <license>
+      <name>The MIT License</name>
+      <url>https://github.com/kol-oss/task-forge/blob/main/LICENSE</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git://github.com/kol-oss/task-forge.git</connection>
+    <developerConnection>scm:git:ssh://github.com/kol-oss/task-forge.git</developerConnection>
+    <url>https://github.com/kol-oss/task-forge</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>kol-oss</id>
+      <name>Mykola</name>
+      <url>https://github.com/kol-oss</url>
+    </developer>
+  </developers>
+</project>
