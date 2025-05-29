@@ -1,0 +1,78 @@
+package io.github.kol.oss.taskforge.service;
+
+import io.github.kol.oss.taskforge.core.ITask;
+import io.github.kol.oss.taskforge.core.action.IAction;
+import io.github.kol.oss.taskforge.core.cancel.ICancelToken;
+import io.github.kol.oss.taskforge.core.descriptors.IDescriptors;
+import io.github.kol.oss.taskforge.core.scheduler.IScheduler;
+import io.github.kol.oss.taskforge.core.status.IEvent;
+import io.github.kol.oss.taskforge.core.status.IStatus;
+import io.github.kol.oss.taskforge.core.status.ITaskStateExecutor;
+import io.github.kol.oss.taskforge.core.status.state.TaskState;
+
+public class Task<T> implements ITask<T> {
+    protected volatile IDescriptors<T> descriptors;
+    protected volatile ITaskStateExecutor executor;
+
+    public Task(final IDescriptors<T> descriptors, ITaskStateExecutor executor) {
+        this.descriptors = descriptors;
+        this.executor = executor;
+    }
+
+    @Override
+    public void start() {
+        this.executor.execute(this.descriptors);
+    }
+
+    @Override
+    public void cancel() {
+        ICancelToken token = this.descriptors.getCancelToken();
+        if (token.isCancelled()) {
+            throw new IllegalStateException("Task is already cancelled");
+        }
+
+        token.cancel();
+    }
+
+    @Override
+    public T getResult() throws Exception {
+        this.descriptors.getStatus().getFinishedEvent().await();
+
+        TaskState state = this.descriptors.getStatus().getState();
+        if (state == TaskState.FAILED || state == TaskState.CANCELED) {
+            throw this.descriptors.getException();
+        }
+
+        return this.descriptors.getResult();
+    }
+
+    @Override
+    public Exception getException() {
+        return this.descriptors.getException();
+    }
+
+    public IAction<T> getAction() {
+        return this.descriptors.getAction();
+    }
+
+    public ICancelToken getCancelToken() {
+        return this.descriptors.getCancelToken();
+    }
+
+    public IScheduler getScheduler() {
+        return this.descriptors.getScheduler();
+    }
+
+    public IStatus getStatus() {
+        return this.descriptors.getStatus();
+    }
+
+    public IEvent getEvent(TaskState state) {
+        return this.descriptors.getStatus().getEvent(state);
+    }
+
+    public <N> Task<N> then(Task<N> task) {
+        this.descriptors.getStatus().getFinishedEvent().addListener(task::start);
+        return task;
+    }
+}
