@@ -8,10 +8,6 @@ import io.github.kol.oss.taskforge.service.status.state.*;
 public class StateExecutor implements IStateExecutor {
     protected volatile IStateHandler baseHandler;
 
-    public StateExecutor(IStateHandler baseExecutor) {
-        this.baseHandler = baseExecutor;
-    }
-
     public StateExecutor() {
         IStateHandler completedExecutor = new CompletedStateHandler();
         IStateHandler failedExecutor = new FailedStateHandler();

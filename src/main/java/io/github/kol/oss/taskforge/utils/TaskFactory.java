@@ -1,5 +1,6 @@
 package io.github.kol.oss.taskforge.utils;
 
+import io.github.kol.oss.taskforge.core.ITask;
 import io.github.kol.oss.taskforge.core.action.IAction;
 import io.github.kol.oss.taskforge.core.action.IEmptyAction;
 import io.github.kol.oss.taskforge.core.action.IEmptyVoidAction;
@@ -10,12 +11,16 @@ import io.github.kol.oss.taskforge.core.scheduler.IScheduler;
 import io.github.kol.oss.taskforge.core.status.IStateExecutor;
 import io.github.kol.oss.taskforge.core.status.IStatus;
 import io.github.kol.oss.taskforge.service.Task;
+import io.github.kol.oss.taskforge.service.WhenAllTask;
+import io.github.kol.oss.taskforge.service.action.when.WhenAllAction;
 import io.github.kol.oss.taskforge.service.cancel.CancelToken;
 import io.github.kol.oss.taskforge.service.descriptors.TaskDescriptors;
 import io.github.kol.oss.taskforge.service.scheduler.UnboundedThreadScheduler;
 import io.github.kol.oss.taskforge.service.status.StateExecutor;
 import io.github.kol.oss.taskforge.service.status.TaskStatus;
 import io.github.kol.oss.taskforge.utils.action.ActionFactory;
+
+import java.util.Collection;
 
 public class TaskFactory {
     private static final IScheduler DEFAULT_SCHEDULER = new UnboundedThreadScheduler();
@@ -78,5 +83,17 @@ public class TaskFactory {
     public static Task<Void> create(IEmptyVoidAction action, IScheduler scheduler) {
         IAction<Void> converted = ActionFactory.convert(action);
         return create(converted, getDefaultToken(), scheduler, getDefaultStatus(), DEFAULT_EXECUTOR);
+    }
+
+    public static <T> Task<Collection<T>> whenAll(Collection<ITask<T>> tasks) {
+        IDescriptors<Collection<T>> descriptors = new TaskDescriptors<>(new WhenAllAction<T>(tasks), getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus());
+
+        return new WhenAllTask<>(descriptors, tasks);
+    }
+
+    public static <T> Task<Collection<T>> whenAll(Collection<ITask<T>> tasks, IScheduler scheduler) {
+        IDescriptors<Collection<T>> descriptors = new TaskDescriptors<>(new WhenAllAction<T>(tasks), getDefaultToken(), scheduler, getDefaultStatus());
+
+        return new WhenAllTask<>(descriptors, tasks);
     }
 }
