@@ -53,23 +53,19 @@ public class TaskFactory {
         return create(action, getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 
-    public static <T> Task<T> create(IEmptyAction<T> action) {
-        IAction<T> converted = ActionFactory.convert(action);
-        return create(converted, getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus(), DEFAULT_EXECUTOR);
-    }
-
-    public static Task<Void> create(IVoidAction action) {
-        IAction<Void> converted = ActionFactory.convert(action);
-        return create(converted, getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus(), DEFAULT_EXECUTOR);
-    }
-
-    public static Task<Void> create(IEmptyVoidAction action) {
-        IAction<Void> converted = ActionFactory.convert(action);
-        return create(converted, getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus(), DEFAULT_EXECUTOR);
-    }
-
     public static <T> Task<T> create(IAction<T> action, IScheduler scheduler) {
         return create(action, getDefaultToken(), scheduler, getDefaultStatus(), DEFAULT_EXECUTOR);
+    }
+
+    public static <T, K> ITask<K> then(ITask<T> prev, IAction<K> action) {
+        ITask<K> next = create(action);
+        prev.then(next);
+
+        return next;
+    }
+
+    public static <T> Task<T> create(IEmptyAction<T> action) {
+        return create(action, DEFAULT_SCHEDULER);
     }
 
     public static <T> Task<T> create(IEmptyAction<T> action, IScheduler scheduler) {
@@ -77,9 +73,17 @@ public class TaskFactory {
         return create(converted, getDefaultToken(), scheduler, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 
+    public static Task<Void> create(IVoidAction action) {
+        return create(action, DEFAULT_SCHEDULER);
+    }
+
     public static Task<Void> create(IVoidAction action, IScheduler scheduler) {
         IAction<Void> converted = ActionFactory.convert(action);
         return create(converted, getDefaultToken(), scheduler, getDefaultStatus(), DEFAULT_EXECUTOR);
+    }
+
+    public static Task<Void> create(IEmptyVoidAction action) {
+        return create(action, DEFAULT_SCHEDULER);
     }
 
     public static Task<Void> create(IEmptyVoidAction action, IScheduler scheduler) {
@@ -88,13 +92,13 @@ public class TaskFactory {
     }
 
     public static <T> Task<Collection<T>> whenAll(Collection<ITask<T>> tasks) {
-        IDescriptors<Collection<T>> descriptors = new TaskDescriptors<>(new WhenAllAction<T>(tasks), getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus());
+        IDescriptors<Collection<T>> descriptors = new TaskDescriptors<>(new WhenAllAction<>(tasks), getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus());
 
         return new WhenAllTask<>(descriptors, tasks);
     }
 
     public static <T> Task<ITask<T>> whenAny(Collection<ITask<T>> tasks) {
-        IDescriptors<ITask<T>> descriptors = new TaskDescriptors<>(new WhenAnyAction<T>(tasks), getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus());
+        IDescriptors<ITask<T>> descriptors = new TaskDescriptors<>(new WhenAnyAction<>(tasks), getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus());
 
         return new WhenAnyTask<>(descriptors, tasks);
     }

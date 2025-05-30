@@ -12,4 +12,6 @@ public interface ITask<T> {
     Exception getException();
 
     IStatus getStatus();
+
+    <N> ITask<N> then(ITask<N> task);
 }

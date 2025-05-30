@@ -5,9 +5,8 @@ import io.github.kol.oss.taskforge.core.action.IAction;
 import io.github.kol.oss.taskforge.core.cancel.ICancelToken;
 import io.github.kol.oss.taskforge.core.descriptors.IDescriptors;
 import io.github.kol.oss.taskforge.core.scheduler.IScheduler;
-import io.github.kol.oss.taskforge.core.status.IEvent;
-import io.github.kol.oss.taskforge.core.status.IStatus;
 import io.github.kol.oss.taskforge.core.status.IStateExecutor;
+import io.github.kol.oss.taskforge.core.status.IStatus;
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 
 public class Task<T> implements ITask<T> {
@@ -55,10 +54,6 @@ public class Task<T> implements ITask<T> {
         return this.descriptors.getAction();
     }
 
-    public ICancelToken getCancelToken() {
-        return this.descriptors.getCancelToken();
-    }
-
     public IScheduler getScheduler() {
         return this.descriptors.getScheduler();
     }
@@ -67,11 +62,7 @@ public class Task<T> implements ITask<T> {
         return this.descriptors.getStatus();
     }
 
-    public IEvent getEvent(TaskState state) {
-        return this.descriptors.getStatus().getEvent(state);
-    }
-
-    public <N> Task<N> then(Task<N> task) {
+    public <N> ITask<N> then(ITask<N> task) {
         this.descriptors.getStatus().getFinishedEvent().addListener(task::start);
         return task;
     }
