@@ -14,13 +14,13 @@ public class TaskDescriptors<T> implements IDescriptors<T> {
     protected T result;
     protected Exception error;
 
-    public TaskDescriptors(IAction<T> action, ICancelToken token, IScheduler scheduler, IStatus status, T result, Exception error) {
+    public TaskDescriptors(IAction<T> action, ICancelToken token, IScheduler scheduler, IStatus status) {
         this.action = action;
         this.token = token;
         this.scheduler = scheduler;
         this.status = status;
-        this.result = result;
-        this.error = error;
+        this.result = null;
+        this.error = null;
     }
 
     @Override
