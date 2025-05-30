@@ -3,15 +3,15 @@ package io.github.kol.oss.taskforge.service.status.state;
 import io.github.kol.oss.taskforge.core.cancel.CancelException;
 import io.github.kol.oss.taskforge.core.cancel.ICancelToken;
 import io.github.kol.oss.taskforge.core.descriptors.IDescriptors;
-import io.github.kol.oss.taskforge.core.status.state.IStateExecutor;
+import io.github.kol.oss.taskforge.core.status.state.IStateHandler;
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 
-public class RunningStateExecutor extends BasicStateExecutor {
-    protected volatile IStateExecutor completedExecutor;
-    protected volatile IStateExecutor failedExecutor;
-    protected volatile IStateExecutor canceledExecutor;
+public class RunningStateHandler extends BasicStateHandler {
+    protected volatile IStateHandler completedExecutor;
+    protected volatile IStateHandler failedExecutor;
+    protected volatile IStateHandler canceledExecutor;
 
-    public RunningStateExecutor(IStateExecutor completedExecutor, IStateExecutor failedExecutor, IStateExecutor canceledExecutor) {
+    public RunningStateHandler(IStateHandler completedExecutor, IStateHandler failedExecutor, IStateHandler canceledExecutor) {
         super(TaskState.RUNNING);
 
         this.completedExecutor = completedExecutor;
@@ -20,8 +20,8 @@ public class RunningStateExecutor extends BasicStateExecutor {
     }
 
     @Override
-    public <T> void execute(IDescriptors<T> descriptors) {
-        super.execute(descriptors);
+    public <T> void handle(IDescriptors<T> descriptors) {
+        super.handle(descriptors);
 
         ICancelToken token = descriptors.getCancelToken();
 
@@ -30,14 +30,14 @@ public class RunningStateExecutor extends BasicStateExecutor {
 
             T value = descriptors.getAction().run(token);
             descriptors.setResult(value);
-            this.completedExecutor.execute(descriptors);
+            this.completedExecutor.handle(descriptors);
         } catch (Exception exception) {
             descriptors.setException(exception);
 
             if (exception instanceof CancelException) {
-                this.canceledExecutor.execute(descriptors);
+                this.canceledExecutor.handle(descriptors);
             } else {
-                this.failedExecutor.execute(descriptors);
+                this.failedExecutor.handle(descriptors);
             }
         }
     }

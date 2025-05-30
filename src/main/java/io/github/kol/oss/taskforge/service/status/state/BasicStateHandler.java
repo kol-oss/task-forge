@@ -1,13 +1,13 @@
 package io.github.kol.oss.taskforge.service.status.state;
 
 import io.github.kol.oss.taskforge.core.descriptors.IDescriptors;
-import io.github.kol.oss.taskforge.core.status.state.IStateExecutor;
+import io.github.kol.oss.taskforge.core.status.state.IStateHandler;
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 
-public class BasicStateExecutor implements IStateExecutor {
+public class BasicStateHandler implements IStateHandler {
     protected volatile TaskState state;
 
-    public BasicStateExecutor(TaskState state) {
+    public BasicStateHandler(TaskState state) {
         this.state = state;
     }
 
@@ -17,7 +17,7 @@ public class BasicStateExecutor implements IStateExecutor {
     }
 
     @Override
-    public <T> void execute(IDescriptors<T> descriptors) {
+    public <T> void handle(IDescriptors<T> descriptors) {
         descriptors.getStatus().setState(this.state);
     }
 }

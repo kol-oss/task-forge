@@ -7,14 +7,14 @@ import io.github.kol.oss.taskforge.core.descriptors.IDescriptors;
 import io.github.kol.oss.taskforge.core.scheduler.IScheduler;
 import io.github.kol.oss.taskforge.core.status.IEvent;
 import io.github.kol.oss.taskforge.core.status.IStatus;
-import io.github.kol.oss.taskforge.core.status.ITaskStateExecutor;
+import io.github.kol.oss.taskforge.core.status.IStateExecutor;
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 
 public class Task<T> implements ITask<T> {
     protected volatile IDescriptors<T> descriptors;
-    protected volatile ITaskStateExecutor executor;
+    protected volatile IStateExecutor executor;
 
-    public Task(final IDescriptors<T> descriptors, ITaskStateExecutor executor) {
+    public Task(final IDescriptors<T> descriptors, IStateExecutor executor) {
         this.descriptors = descriptors;
         this.executor = executor;
     }

@@ -4,14 +4,14 @@ import io.github.kol.oss.taskforge.core.cancel.CancelException;
 import io.github.kol.oss.taskforge.core.descriptors.IDescriptors;
 import io.github.kol.oss.taskforge.core.scheduler.IScheduler;
 import io.github.kol.oss.taskforge.core.status.IEvent;
-import io.github.kol.oss.taskforge.core.status.state.IStateExecutor;
+import io.github.kol.oss.taskforge.core.status.state.IStateHandler;
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 
-public class ScheduledStateExecutor extends BasicStateExecutor {
-    protected volatile IStateExecutor runningExecutor;
-    protected volatile IStateExecutor cancelExecutor;
+public class ScheduledStateHandler extends BasicStateHandler {
+    protected volatile IStateHandler runningExecutor;
+    protected volatile IStateHandler cancelExecutor;
 
-    public ScheduledStateExecutor(IStateExecutor runningExecutor, IStateExecutor cancelExecutor) {
+    public ScheduledStateHandler(IStateHandler runningExecutor, IStateHandler cancelExecutor) {
         super(TaskState.SCHEDULED);
 
         this.runningExecutor = runningExecutor;
@@ -19,13 +19,13 @@ public class ScheduledStateExecutor extends BasicStateExecutor {
     }
 
     @Override
-    public <T> void execute(IDescriptors<T> descriptors) {
+    public <T> void handle(IDescriptors<T> descriptors) {
         IEvent scheduledEvent = descriptors.getStatus().getEvent(TaskState.SCHEDULED);
         if (scheduledEvent.hasAlerted()) {
             throw new IllegalStateException("Task for action " + descriptors.getAction() + " was already scheduled");
         }
 
-        super.execute(descriptors);
+        super.handle(descriptors);
 
         boolean cancelCalled = this.checkCancelToken(descriptors);
         if(!cancelCalled) {
@@ -38,7 +38,7 @@ public class ScheduledStateExecutor extends BasicStateExecutor {
             descriptors.getCancelToken().throwIfCancelled();
         } catch (CancelException exception) {
             descriptors.setException(exception);
-            this.cancelExecutor.execute(descriptors);
+            this.cancelExecutor.handle(descriptors);
             return true;
         }
 
@@ -48,6 +48,6 @@ public class ScheduledStateExecutor extends BasicStateExecutor {
     protected <T> void schedule(IDescriptors<T> descriptors) {
         IScheduler scheduler = descriptors.getScheduler();
 
-        scheduler.schedule(() -> this.runningExecutor.execute(descriptors));
+        scheduler.schedule(() -> this.runningExecutor.handle(descriptors));
     }
 }
