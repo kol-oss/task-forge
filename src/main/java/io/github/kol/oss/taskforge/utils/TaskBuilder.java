@@ -15,10 +15,10 @@ import io.github.kol.oss.taskforge.utils.builder.EmptyVoidTaskBuilder;
 import io.github.kol.oss.taskforge.utils.builder.VoidTaskBuilder;
 
 public abstract class TaskBuilder<T> {
-    protected ICancelToken token = TaskFactory.DEFAULT_TOKEN;
-    protected IStatus status = TaskFactory.DEFAULT_STATUS;
-    protected IScheduler scheduler = TaskFactory.DEFAULT_SCHEDULER;
-    protected IStateExecutor executor = TaskFactory.DEFAULT_EXECUTOR;
+    protected ICancelToken token = TaskFactory.getDefaultToken();
+    protected IStatus status = TaskFactory.getDefaultStatus();
+    protected IScheduler scheduler = TaskFactory.getDefaultScheduler();
+    protected IStateExecutor executor = TaskFactory.getDefaultExecutor();
 
     public static <T> TaskBuilder<T> createTask(IAction<T> action) {
         return new ActionTaskBuilder<>(action);

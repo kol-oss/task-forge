@@ -18,51 +18,65 @@ import io.github.kol.oss.taskforge.service.status.TaskStatus;
 import io.github.kol.oss.taskforge.utils.action.ActionFactory;
 
 public class TaskFactory {
-    public static final ICancelToken DEFAULT_TOKEN = new CancelToken();
-    public static final IScheduler DEFAULT_SCHEDULER = new UnboundedThreadScheduler();
-    public static final IStateExecutor DEFAULT_EXECUTOR = new StateExecutor();
-    public static final IStatus DEFAULT_STATUS = new TaskStatus();
-
+    private static final IScheduler DEFAULT_SCHEDULER = new UnboundedThreadScheduler();
+    private static final IStateExecutor DEFAULT_EXECUTOR = new StateExecutor();
+    
+    public static ICancelToken getDefaultToken() {
+        return new CancelToken();
+    }
+    
+    public static IScheduler getDefaultScheduler() {
+        return DEFAULT_SCHEDULER;
+    }
+    
+    public static IStateExecutor getDefaultExecutor() {
+        return DEFAULT_EXECUTOR;
+    }
+    
+    public static IStatus getDefaultStatus() {
+        return new TaskStatus();
+    }
+    
     public static <T> Task<T> create(IAction<T> action, ICancelToken token, IScheduler scheduler, IStatus status, IStateExecutor executor) {
         IDescriptors<T> descriptors = new TaskDescriptors<>(action, token, scheduler, status);
         return new Task<>(descriptors, executor);
     }
 
     public static <T> Task<T> create(IAction<T> action) {
-        return create(action, DEFAULT_TOKEN, DEFAULT_SCHEDULER, DEFAULT_STATUS, DEFAULT_EXECUTOR);
+        return create(action, getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 
     public static <T> Task<T> create(IEmptyAction<T> action) {
         IAction<T> converted = ActionFactory.convert(action);
-        return create(converted, DEFAULT_TOKEN, DEFAULT_SCHEDULER, DEFAULT_STATUS, DEFAULT_EXECUTOR);
+        return create(converted, getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 
     public static Task<Void> create(IVoidAction action) {
         IAction<Void> converted = ActionFactory.convert(action);
-        return create(converted, DEFAULT_TOKEN, DEFAULT_SCHEDULER, DEFAULT_STATUS, DEFAULT_EXECUTOR);
+        return create(converted, getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 
     public static Task<Void> create(IEmptyVoidAction action) {
         IAction<Void> converted = ActionFactory.convert(action);
-        return create(converted, DEFAULT_TOKEN, DEFAULT_SCHEDULER, DEFAULT_STATUS, DEFAULT_EXECUTOR);
+        return create(converted, getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 
     public static <T> Task<T> create(IAction<T> action, IScheduler scheduler) {
-        return create(action, DEFAULT_TOKEN, scheduler, DEFAULT_STATUS, DEFAULT_EXECUTOR);
+        return create(action, getDefaultToken(), scheduler, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 
     public static <T> Task<T> create(IEmptyAction<T> action, IScheduler scheduler) {
         IAction<T> converted = ActionFactory.convert(action);
-        return create(converted, DEFAULT_TOKEN, scheduler, DEFAULT_STATUS, DEFAULT_EXECUTOR);
+        return create(converted, getDefaultToken(), scheduler, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 
     public static Task<Void> create(IVoidAction action, IScheduler scheduler) {
         IAction<Void> converted = ActionFactory.convert(action);
-        return create(converted, DEFAULT_TOKEN, scheduler, DEFAULT_STATUS, DEFAULT_EXECUTOR);
+        return create(converted, getDefaultToken(), scheduler, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 
     public static Task<Void> create(IEmptyVoidAction action, IScheduler scheduler) {
         IAction<Void> converted = ActionFactory.convert(action);
-        return create(converted, DEFAULT_TOKEN, scheduler, DEFAULT_STATUS, DEFAULT_EXECUTOR);
+        return create(converted, getDefaultToken(), scheduler, getDefaultStatus(), DEFAULT_EXECUTOR);
     }
 }
