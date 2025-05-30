@@ -7,16 +7,16 @@ import io.github.kol.oss.taskforge.core.status.state.IStateHandler;
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 
 public class RunningStateHandler extends BasicStateHandler {
-    protected volatile IStateHandler completedExecutor;
-    protected volatile IStateHandler failedExecutor;
-    protected volatile IStateHandler canceledExecutor;
+    protected volatile IStateHandler completedHandler;
+    protected volatile IStateHandler failedHandler;
+    protected volatile IStateHandler canceledHandler;
 
-    public RunningStateHandler(IStateHandler completedExecutor, IStateHandler failedExecutor, IStateHandler canceledExecutor) {
+    public RunningStateHandler(IStateHandler completedHandler, IStateHandler failedHandler, IStateHandler canceledHandler) {
         super(TaskState.RUNNING);
 
-        this.completedExecutor = completedExecutor;
-        this.failedExecutor = failedExecutor;
-        this.canceledExecutor = canceledExecutor;
+        this.completedHandler = completedHandler;
+        this.failedHandler = failedHandler;
+        this.canceledHandler = canceledHandler;
     }
 
     @Override
@@ -30,14 +30,14 @@ public class RunningStateHandler extends BasicStateHandler {
 
             T value = descriptors.getAction().run(token);
             descriptors.setResult(value);
-            this.completedExecutor.handle(descriptors);
+            this.completedHandler.handle(descriptors);
         } catch (Exception exception) {
             descriptors.setException(exception);
 
             if (exception instanceof CancelException) {
-                this.canceledExecutor.handle(descriptors);
+                this.canceledHandler.handle(descriptors);
             } else {
-                this.failedExecutor.handle(descriptors);
+                this.failedHandler.handle(descriptors);
             }
         }
     }

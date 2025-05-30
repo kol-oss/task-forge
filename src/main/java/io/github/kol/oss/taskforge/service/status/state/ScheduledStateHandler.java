@@ -8,14 +8,14 @@ import io.github.kol.oss.taskforge.core.status.state.IStateHandler;
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 
 public class ScheduledStateHandler extends BasicStateHandler {
-    protected volatile IStateHandler runningExecutor;
-    protected volatile IStateHandler cancelExecutor;
+    protected volatile IStateHandler runningHandler;
+    protected volatile IStateHandler cancelHandler;
 
-    public ScheduledStateHandler(IStateHandler runningExecutor, IStateHandler cancelExecutor) {
+    public ScheduledStateHandler(IStateHandler runningHandler, IStateHandler cancelHandler) {
         super(TaskState.SCHEDULED);
 
-        this.runningExecutor = runningExecutor;
-        this.cancelExecutor = cancelExecutor;
+        this.runningHandler = runningHandler;
+        this.cancelHandler = cancelHandler;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ScheduledStateHandler extends BasicStateHandler {
             descriptors.getCancelToken().throwIfCancelled();
         } catch (CancelException exception) {
             descriptors.setException(exception);
-            this.cancelExecutor.handle(descriptors);
+            this.cancelHandler.handle(descriptors);
             return true;
         }
 
@@ -48,6 +48,6 @@ public class ScheduledStateHandler extends BasicStateHandler {
     protected <T> void schedule(IDescriptors<T> descriptors) {
         IScheduler scheduler = descriptors.getScheduler();
 
-        scheduler.schedule(() -> this.runningExecutor.handle(descriptors));
+        scheduler.schedule(() -> this.runningHandler.handle(descriptors));
     }
 }
