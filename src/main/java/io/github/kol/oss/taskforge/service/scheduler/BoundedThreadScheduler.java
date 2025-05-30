@@ -5,15 +5,15 @@ import io.github.kol.oss.taskforge.core.scheduler.IScheduler;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class PoolScheduler implements IScheduler {
+public class BoundedThreadScheduler implements IScheduler {
     protected volatile int concurrencyLevel;
     protected volatile ExecutorService pool;
 
-    public PoolScheduler() {
+    public BoundedThreadScheduler() {
         this(Runtime.getRuntime().availableProcessors());
     }
 
-    public PoolScheduler(final int concurrencyLevel) {
+    public BoundedThreadScheduler(final int concurrencyLevel) {
         this.concurrencyLevel = concurrencyLevel;
         this.pool = Executors.newFixedThreadPool(concurrencyLevel);
     }
@@ -24,7 +24,7 @@ public class PoolScheduler implements IScheduler {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         this.pool.shutdown();
     }
 
