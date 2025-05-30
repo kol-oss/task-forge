@@ -12,7 +12,9 @@ import io.github.kol.oss.taskforge.core.status.IStateExecutor;
 import io.github.kol.oss.taskforge.core.status.IStatus;
 import io.github.kol.oss.taskforge.service.Task;
 import io.github.kol.oss.taskforge.service.WhenAllTask;
+import io.github.kol.oss.taskforge.service.WhenAnyTask;
 import io.github.kol.oss.taskforge.service.action.when.WhenAllAction;
+import io.github.kol.oss.taskforge.service.action.when.WhenAnyAction;
 import io.github.kol.oss.taskforge.service.cancel.CancelToken;
 import io.github.kol.oss.taskforge.service.descriptors.TaskDescriptors;
 import io.github.kol.oss.taskforge.service.scheduler.UnboundedThreadScheduler;
@@ -25,23 +27,23 @@ import java.util.Collection;
 public class TaskFactory {
     private static final IScheduler DEFAULT_SCHEDULER = new UnboundedThreadScheduler();
     private static final IStateExecutor DEFAULT_EXECUTOR = new StateExecutor();
-    
+
     public static ICancelToken getDefaultToken() {
         return new CancelToken();
     }
-    
+
     public static IScheduler getDefaultScheduler() {
         return DEFAULT_SCHEDULER;
     }
-    
+
     public static IStateExecutor getDefaultExecutor() {
         return DEFAULT_EXECUTOR;
     }
-    
+
     public static IStatus getDefaultStatus() {
         return new TaskStatus();
     }
-    
+
     public static <T> Task<T> create(IAction<T> action, ICancelToken token, IScheduler scheduler, IStatus status, IStateExecutor executor) {
         IDescriptors<T> descriptors = new TaskDescriptors<>(action, token, scheduler, status);
         return new Task<>(descriptors, executor);
@@ -91,9 +93,9 @@ public class TaskFactory {
         return new WhenAllTask<>(descriptors, tasks);
     }
 
-    public static <T> Task<Collection<T>> whenAll(Collection<ITask<T>> tasks, IScheduler scheduler) {
-        IDescriptors<Collection<T>> descriptors = new TaskDescriptors<>(new WhenAllAction<T>(tasks), getDefaultToken(), scheduler, getDefaultStatus());
+    public static <T> Task<ITask<T>> whenAny(Collection<ITask<T>> tasks) {
+        IDescriptors<ITask<T>> descriptors = new TaskDescriptors<>(new WhenAnyAction<T>(tasks), getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus());
 
-        return new WhenAllTask<>(descriptors, tasks);
+        return new WhenAnyTask<>(descriptors, tasks);
     }
 }

@@ -7,8 +7,8 @@ import io.github.kol.oss.taskforge.core.status.state.IStateHandler;
 
 import java.util.Collection;
 
-public class WhenAllStateHandler<K> extends WhenScheduledStateHandler<K> {
-    public WhenAllStateHandler(IStateHandler runningExecutor, IStateHandler cancelExecutor, Collection<ITask<K>> tasks) {
+public class WhenAnyStateHandler<K> extends WhenScheduledStateHandler<K> {
+    public WhenAnyStateHandler(IStateHandler runningExecutor, IStateHandler cancelExecutor, Collection<ITask<K>> tasks) {
         super(runningExecutor, cancelExecutor, tasks);
     }
 
@@ -27,10 +27,18 @@ public class WhenAllStateHandler<K> extends WhenScheduledStateHandler<K> {
 
                     if (super.checkCancelToken(descriptors))
                         this.finished = true;
-                    else
+                    else if (this.anyFinished())
                         super.scheduleGeneral(descriptors);
                 }
             });
         }
+    }
+
+    protected boolean anyFinished() {
+        return this.tasks.stream()
+                .anyMatch(task -> task.getStatus()
+                        .getFinishedEvent()
+                        .hasAlerted()
+                );
     }
 }
