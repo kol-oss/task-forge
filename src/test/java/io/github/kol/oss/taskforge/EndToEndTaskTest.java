@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("End to End Task Tests")
 public class EndToEndTaskTest {
     public static Stream<Arguments> getStateFlowInput() {
         IVoidAction completed = (token) -> {
