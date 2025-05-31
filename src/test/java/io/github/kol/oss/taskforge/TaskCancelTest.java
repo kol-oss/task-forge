@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class CancelTest {
+public class TaskCancelTest {
     @Test
     @DisplayName("cancel should cancel token when not already cancelled")
     void cancel_shouldCancelToken_whenNotCancelled() {

@@ -1,4 +1,4 @@
-package io.github.kol.oss.taskforge.utils;
+package io.github.kol.oss.taskforge.core.status;
 
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 

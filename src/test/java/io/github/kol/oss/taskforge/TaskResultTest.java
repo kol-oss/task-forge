@@ -16,7 +16,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class ComponentsTest {
+class TaskResultTest {
+    @Test
+    @DisplayName("start should execute task via executor")
+    void start_shouldExecuteViaExecutor() {
+        // Arrange
+        IDescriptors<String> mockDescriptors = mock(IDescriptors.class);
+        IStateExecutor mockExecutor = mock(IStateExecutor.class);
+        ITask<String> task = new Task<>(mockDescriptors, mockExecutor);
+
+        // Act
+        task.start();
+
+        // Assert
+        verify(mockExecutor, times(1)).execute(mockDescriptors);
+    }
+
     @Test
     @DisplayName("getResult should return result when completed")
     void getResult_shouldReturnResult_whenCompleted() throws Exception {
@@ -130,5 +145,27 @@ class ComponentsTest {
 
         // Assert
         assertEquals(mockStatus, result);
+    }
+
+    @Test
+    @DisplayName("then should chain tasks correctly")
+    void then_shouldChainTasksCorrectly() {
+        // Arrange
+        IDescriptors<String> mockDescriptors = mock(IDescriptors.class);
+        IStatus mockStatus = mock(IStatus.class);
+        IEvent mockEvent = mock(IEvent.class);
+        when(mockDescriptors.getStatus()).thenReturn(mockStatus);
+        when(mockStatus.getFinishedEvent()).thenReturn(mockEvent);
+
+        ITask<Integer> mockTask = mock(ITask.class);
+
+        Task<String> task = new Task<>(mockDescriptors, mock(IStateExecutor.class));
+
+        // Act
+        ITask<Integer> result = task.then(mockTask);
+
+        // Assert
+        verify(mockEvent, times(1)).addListener(any(Runnable.class));
+        assertEquals(mockTask, result);
     }
 }

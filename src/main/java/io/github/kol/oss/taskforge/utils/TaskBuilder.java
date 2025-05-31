@@ -7,6 +7,7 @@ import io.github.kol.oss.taskforge.core.action.IVoidAction;
 import io.github.kol.oss.taskforge.core.cancel.ICancelToken;
 import io.github.kol.oss.taskforge.core.scheduler.IScheduler;
 import io.github.kol.oss.taskforge.core.status.IStateExecutor;
+import io.github.kol.oss.taskforge.core.status.IStateListener;
 import io.github.kol.oss.taskforge.core.status.IStatus;
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 import io.github.kol.oss.taskforge.service.Task;
