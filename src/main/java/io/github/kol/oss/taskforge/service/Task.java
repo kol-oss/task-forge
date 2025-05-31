@@ -9,6 +9,8 @@ import io.github.kol.oss.taskforge.core.status.IStateExecutor;
 import io.github.kol.oss.taskforge.core.status.IStatus;
 import io.github.kol.oss.taskforge.core.status.state.TaskState;
 
+import java.util.concurrent.TimeUnit;
+
 public class Task<T> implements ITask<T> {
     protected volatile IDescriptors<T> descriptors;
     protected volatile IStateExecutor executor;
@@ -31,6 +33,21 @@ public class Task<T> implements ITask<T> {
         }
 
         token.cancel();
+    }
+
+    @Override
+    public void await() throws InterruptedException {
+        this.descriptors.getStatus().getFinishedEvent().await();
+    }
+
+    @Override
+    public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+        return this.descriptors.getStatus().getFinishedEvent().await(timeout, unit);
+    }
+
+    @Override
+    public TaskState getState() {
+        return this.descriptors.getStatus().getState();
     }
 
     @Override

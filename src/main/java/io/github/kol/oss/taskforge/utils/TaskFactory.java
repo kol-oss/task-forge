@@ -93,13 +93,17 @@ public class TaskFactory {
 
     public static <T> Task<Collection<T>> whenAll(Collection<ITask<T>> tasks) {
         IDescriptors<Collection<T>> descriptors = new TaskDescriptors<>(new WhenAllAction<>(tasks), getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus());
+        Task<Collection<T>> task = new WhenAllTask<>(descriptors, tasks);
+        task.start();
 
-        return new WhenAllTask<>(descriptors, tasks);
+        return task;
     }
 
     public static <T> Task<ITask<T>> whenAny(Collection<ITask<T>> tasks) {
         IDescriptors<ITask<T>> descriptors = new TaskDescriptors<>(new WhenAnyAction<>(tasks), getDefaultToken(), DEFAULT_SCHEDULER, getDefaultStatus());
+        Task<ITask<T>> task = new WhenAnyTask<>(descriptors, tasks);
+        task.start();
 
-        return new WhenAnyTask<>(descriptors, tasks);
+        return task;
     }
 }

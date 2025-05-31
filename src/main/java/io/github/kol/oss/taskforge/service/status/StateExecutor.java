@@ -15,7 +15,7 @@ public class StateExecutor implements IStateExecutor {
     public StateExecutor() {
         IStateHandler completedExecutor = new CompletedStateHandler();
         IStateHandler failedExecutor = new FailedStateHandler();
-        IStateHandler canceledExecutor = new CancelledStateHandler();
+        IStateHandler canceledExecutor = new CanceledStateHandler();
 
         this.baseHandler = new ScheduledStateHandler(
                 new RunningStateHandler(

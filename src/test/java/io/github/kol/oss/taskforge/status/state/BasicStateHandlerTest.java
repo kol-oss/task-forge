@@ -21,7 +21,7 @@ public class BasicStateHandlerTest {
     static Stream<Arguments> stateHandlerProvider() {
         IStateHandler completedHandler = new CompletedStateHandler();
         IStateHandler failedHandler = new FailedStateHandler();
-        IStateHandler cancelledHandler = new CancelledStateHandler();
+        IStateHandler cancelledHandler = new CanceledStateHandler();
         IStateHandler runningHandler = new RunningStateHandler(cancelledHandler, failedHandler, cancelledHandler);
         IStateHandler scheduledHandler = new ScheduledStateHandler(runningHandler, cancelledHandler);
 
