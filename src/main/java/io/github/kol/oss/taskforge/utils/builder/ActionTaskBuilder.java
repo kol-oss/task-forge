@@ -13,7 +13,7 @@ public class ActionTaskBuilder<T> extends TaskBuilder<T> {
     }
 
     @Override
-    public Task<T> build() {
+    public Task<T> construct() {
         return TaskFactory.create(this.action, super.token, super.scheduler, super.status, super.executor);
     }
 }

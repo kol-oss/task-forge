@@ -15,7 +15,7 @@ public class EmptyVoidTaskBuilder extends TaskBuilder<Void> {
     }
 
     @Override
-    public Task<Void> build() {
+    public Task<Void> construct() {
         IAction<Void> converted = ActionFactory.convert(action);
         return TaskFactory.create(converted, super.token, super.scheduler, super.status, super.executor);
     }

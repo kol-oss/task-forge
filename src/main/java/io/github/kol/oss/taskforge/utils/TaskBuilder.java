@@ -8,6 +8,7 @@ import io.github.kol.oss.taskforge.core.cancel.ICancelToken;
 import io.github.kol.oss.taskforge.core.scheduler.IScheduler;
 import io.github.kol.oss.taskforge.core.status.IStateExecutor;
 import io.github.kol.oss.taskforge.core.status.IStatus;
+import io.github.kol.oss.taskforge.core.status.state.TaskState;
 import io.github.kol.oss.taskforge.service.Task;
 import io.github.kol.oss.taskforge.utils.builder.ActionTaskBuilder;
 import io.github.kol.oss.taskforge.utils.builder.EmptyTaskBuilder;
@@ -19,6 +20,7 @@ public abstract class TaskBuilder<T> {
     protected IStatus status = TaskFactory.getDefaultStatus();
     protected IScheduler scheduler = TaskFactory.getDefaultScheduler();
     protected IStateExecutor executor = TaskFactory.getDefaultExecutor();
+    protected IStateListener listener;
 
     public static <T> TaskBuilder<T> createTask(IAction<T> action) {
         return new ActionTaskBuilder<>(action);
@@ -72,5 +74,29 @@ public abstract class TaskBuilder<T> {
         return this;
     }
 
-    public abstract Task<T> build();
+    public final TaskBuilder<T> withListener(final IStateListener listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException("Task listener can not be null");
+        }
+
+        this.listener = listener;
+        return this;
+    }
+
+    protected abstract Task<T> construct();
+
+    public Task<T> build() {
+        Task<T> task = this.construct();
+
+        if (this.listener != null) {
+            IStatus taskStatus = task.getStatus();
+            for (TaskState state : TaskState.values()) {
+                taskStatus.getEvent(state).addListener(listener.stateToFunction(state));
+            }
+
+            taskStatus.getFinishedEvent().addListener(() -> listener.onFinished());
+        }
+
+        return task;
+    }
 }
