@@ -25,19 +25,11 @@ import io.github.kol.oss.taskforge.utils.action.ActionFactory;
 import java.util.Collection;
 
 public class TaskFactory {
-    private static final IScheduler DEFAULT_SCHEDULER = new UnboundedThreadScheduler();
-    private static final IStateExecutor DEFAULT_EXECUTOR = new StateExecutor();
+    public static final IScheduler DEFAULT_SCHEDULER = new UnboundedThreadScheduler();
+    public static final IStateExecutor DEFAULT_EXECUTOR = new StateExecutor();
 
     public static ICancelToken getDefaultToken() {
         return new CancelToken();
-    }
-
-    public static IScheduler getDefaultScheduler() {
-        return DEFAULT_SCHEDULER;
-    }
-
-    public static IStateExecutor getDefaultExecutor() {
-        return DEFAULT_EXECUTOR;
     }
 
     public static IStatus getDefaultStatus() {

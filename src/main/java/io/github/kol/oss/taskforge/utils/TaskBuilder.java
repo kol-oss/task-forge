@@ -24,8 +24,8 @@ public class TaskBuilder<T> {
     protected final List<ITask<?>> nextTasks = new ArrayList<>();
     protected ICancelToken token = TaskFactory.getDefaultToken();
     protected IStatus status = TaskFactory.getDefaultStatus();
-    protected IScheduler scheduler = TaskFactory.getDefaultScheduler();
-    protected IStateExecutor executor = TaskFactory.getDefaultExecutor();
+    protected IScheduler scheduler = TaskFactory.DEFAULT_SCHEDULER;
+    protected IStateExecutor executor = TaskFactory.DEFAULT_EXECUTOR;
     protected IStateListener listener;
 
     private TaskBuilder(IAction<T> action) {
