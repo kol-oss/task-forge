@@ -12,6 +12,72 @@ TaskForge is educational implementation of C# embedded Task Parallel Library on 
 - **Cancellation Support**: Cooperative cancellation pattern
 - **State Tracking**: Monitor task lifecycle through state listeners
 
+## Task Cancellation
+
+Tasks support cooperative cancellation through the `ICancelToken` interface. You can cancel a task in three ways:
+
+1. **Explicit cancellation**:
+```java
+ITask<String> task = TaskFactory.create(...);
+task.start();
+// Later...
+task.cancel();
+```
+
+2. **Using a pre-cancelled token**:
+
+```java
+import io.github.kol.oss.taskforge.utils.TaskBuilder;
+
+ICancelToken token = new CancelToken();
+token.cancel(); // Cancel before task starts
+
+Task<String> task = TaskBuilder.createTask(...)
+        .withToken(token)
+        .build();
+```
+
+3. **Execution cancellation**:
+```java
+Task<Integer> task = TaskFactory.create((ICancelToken token) -> {
+    for (int i = 0; i < 100; i++) {
+        token.throwIfCancelled(); // Throws if cancelled
+        // Continue work...
+    }
+    return result;
+});
+```
+
+The execution cancellation system works cooperatively - tasks must periodically check the cancellation token to respond to cancellation requests. When cancelled, tasks transition to the `CANCELED` state and any waiting threads are notified.
+
+## Custom Scheduling and Event Monitoring
+
+TaskForge provides extensive customization capabilities through its scheduler and event monitoring interfaces. You can implement your own `IScheduler` to control exactly how tasks are executed in threading mechanisms. The library includes several built-in schedulers:
+
+1. **`UnboundedThreadScheduler`**: Creates a new thread for each task (default)
+2. **`BoundedThreadScheduler`**: Uses a fixed-size thread pool
+3. **`CurrentThreadScheduler`**: Executes tasks immediately in the current thread
+
+To use a custom scheduler:
+```java
+IScheduler myScheduler = new BoundedThreadScheduler(4); // 4-thread pool
+Task<String> task = TaskFactory.create(() -> "Custom scheduled", myScheduler);
+```
+
+For event monitoring, implement `IStatus` and `IEvent` interfaces to track task state changes. The event system allows you to:
+- Await specific state changes
+- Add/remove listeners for state transitions
+- Check if events have occurred
+
+Example of custom event monitoring:
+```java
+// Finished event (task changed state into COMPLETED/CANCELLED/FAILED)
+task.getFinishedEvent().addListener(() -> System.out.println("Task finished"));
+
+// Event for selected state
+task.getEvent(TaskState.FAILED).addListener(() -> System.out.println("Task failed"));
+```
+
 ## Usage Examples
 
 ### Basic Task Creation with Different Action Types
